@@ -36,6 +36,4 @@ make build-pi
 
 ## Run
 
-`sh
-make run
-`
+`make run`
