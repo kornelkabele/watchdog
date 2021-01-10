@@ -83,6 +83,8 @@ func main() {
 
 		// get new image name
 		imageName := filepath.Join(imagePath, fmt.Sprintf("%s-%04d.jpg", weekdayHour, 1+countFiles(allImagesMask)))
+		var sidx float32
+		dirty := false
 
 		captureCommand, err := getCaptureCommand(imageName)
 		if err != nil {
@@ -92,15 +94,14 @@ func main() {
 		err = retry(5, 1*time.Second, func() error { return executeCommand(captureCommand) })
 		if err != nil {
 			log.Printf("Failed to capture image: %s\n", err)
-			continue
+			goto nextIteration
 		}
 
-		var sidx float32
-		dirty := false
 		if len(lastImage) > 0 {
 			sidx, err = imageSimilarityIndexFile(imageName, lastImage, cfg.Settings.Sensitivity)
 			if err != nil {
 				log.Printf("Failed to calculate similarity index: %s\n", err)
+				goto nextIteration
 			}
 
 			fmt.Printf("Similarity index = %.2f\n", sidx)
@@ -135,6 +136,8 @@ func main() {
 		if dirty || len(lastImage) == 0 {
 			lastImage = imageName
 		}
+
+	nextIteration:
 
 		// pause if necessary, we do not want to overload the loop in case of issues
 		endTime := time.Now()
