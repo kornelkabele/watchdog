@@ -9,6 +9,7 @@ Camera alert system which successfuly runs on Raspberry Pi
 ## Configuration
 
 Create a .secrets file with credentials:
+```sh
 CAMERA_HOST=""
 CAMERA_PORT=554
 CAMERA_USER=""
@@ -25,10 +26,13 @@ SMTP_USER=""
 SMTP_PASS=""
 SMTP_SENDER=""
 SMTP_RECEIVER=""
+```
 
 ## Build
 `sh
 make build
+`
+`sh
 make build-pi
 `
 
