@@ -29,12 +29,10 @@ SMTP_RECEIVER=""
 ```
 
 ## Build
-`sh
+```sh
 make build
-`
-`sh
 make build-pi
-`
+```
 
 ## Run
 
