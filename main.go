@@ -16,6 +16,7 @@ var (
 const (
 	// AppVersion is application version
 	AppVersion = "v1.0.0"
+	configFile = "config.yml"
 )
 
 func parseFlags() {
@@ -33,7 +34,7 @@ func loadConfiguration() {
 	if err := os.Chdir(filepath.Dir(dir)); err != nil {
 		log.Fatal(err)
 	}
-	loadConfig(&cfg, "config.yml")
+	loadConfig(&cfg, configFile)
 }
 
 func createBaseImageDir() {
