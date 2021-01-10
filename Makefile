@@ -28,6 +28,7 @@ run:
 deps:
 		$(GOGET) github.com/secsy/goftp
 		$(GOGET) github.com/jordan-wright/email
+		$(GOGET) github.com/disintegration/imaging
 
 # Cross compilation
 build-pi:
