@@ -36,6 +36,7 @@ type configSettings struct {
 	KeepThreshold   float32 `yaml:"keepThreshold"`
 	UploadThreshold float32 `yaml:"uploadThreshold"`
 	EmailThreshold  float32 `yaml:"emailThreshold"`
+	EmailInterval   int     `yaml:"emailInterval"`
 	BaseImageDir    string  `yaml:"baseImageDir"`
 	LogFile         string  `yaml:"logFile"`
 	FFmpegCmd       string  `yaml:"ffmpegCmd"`
@@ -132,6 +133,9 @@ func validateConfig(cfg *config) {
 	}
 	if cfg.Settings.EmailThreshold <= 0.0 || cfg.Settings.EmailThreshold > 1.0 {
 		log.Fatal("EmailThreshold is out of range 0.0 - 1.0\n")
+	}
+	if cfg.Settings.EmailInterval < 0 || cfg.Settings.EmailInterval > 3600 {
+		log.Fatal("EmailInterval is out of range 0 - 3600 seconds\n")
 	}
 	if cfg.Settings.BaseImageDir == "" {
 		log.Fatal("BaseImageDir must be defined\n")

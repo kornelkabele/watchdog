@@ -27,6 +27,7 @@ settings:
   keepThreshold: 0.10
   uploadThreshold: 0.12
   emailThreshold: 0.16
+  emailInterval: 300
   baseImageDir: "./images"
   logFile: "./watchdog.log"
   ffmpegCmd: "ffmpeg \"-rtsp_transport\" tcp -i \"rtsp://{{.User}}:{{.Pass}}@{{.Host}}:{{.Port}}/stream1\" -frames:v 1 -nostdin {{.Image}} -y"

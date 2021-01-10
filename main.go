@@ -123,7 +123,7 @@ func main() {
 			}
 
 			// send email alert
-			if sidx > cfg.Settings.EmailThreshold && currentTime.Sub(lastAlert).Seconds() > 300.0 {
+			if sidx > cfg.Settings.EmailThreshold && currentTime.Sub(lastAlert).Seconds() > float64(cfg.Settings.EmailInterval) {
 				err = sendEmail("CAMERA ALERT", "", []string{imageName}, cfg.SMTP)
 				if err != nil {
 					log.Printf("Failed to send email alert: %s\n", err)
