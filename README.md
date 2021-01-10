@@ -1,5 +1,5 @@
 # Watchdog
-Camera alert system which successfuly runs on Raspberry Pi
+Camera alert system which can run on Raspberry Pi, capture still images from RTSP enabled camera stream and send alerts to FTP and e-mail via SMTP.
 
 ## Features
 - Camera connectivity using ffmpeg and rtsp protocol capturing still images
