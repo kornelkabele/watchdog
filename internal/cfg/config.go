@@ -1,4 +1,4 @@
-package utils
+package cfg
 
 import (
 	"log"
@@ -42,6 +42,7 @@ type ConfigSettings struct {
 	FFmpegCmd       string  `yaml:"ffmpegCmd"`
 }
 
+// Config contains configuration
 type Config struct {
 	Camera   ConfigCamera   `yaml:"camera"`
 	FTP      ConfigFTP      `yaml:"ftp"`
@@ -49,7 +50,20 @@ type Config struct {
 	Settings ConfigSettings `yaml:"settings"`
 }
 
-func loadConfig(cfg *Config, configFile string) {
+var (
+	// Camera configuration
+	Camera ConfigCamera
+	// FTP configuration
+	FTP ConfigFTP
+	// SMTP configuration
+	SMTP ConfigSMTP
+	// Settings configuration
+	Settings ConfigSettings
+)
+
+// LoadConfig loads configuration from yml file or default
+func LoadConfig(configFile string) {
+	cfg := Config{}
 	f, err := os.Open(configFile)
 	if err != nil {
 		log.Fatal(err)
@@ -62,8 +76,13 @@ func loadConfig(cfg *Config, configFile string) {
 		log.Fatal(err)
 	}
 
-	loadEnvSecrets(cfg)
-	validateConfig(cfg)
+	loadEnvSecrets(&cfg)
+	validateConfig(&cfg)
+
+	Camera = cfg.Camera
+	FTP = cfg.FTP
+	SMTP = cfg.SMTP
+	Settings = cfg.Settings
 }
 
 func loadEnvSecrets(cfg *Config) {

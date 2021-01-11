@@ -5,13 +5,15 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/kornelkabele/watchdog/internal/cfg"
 	"github.com/secsy/goftp"
 )
 
-func uploadFTP(cfg ConfigFTP, src, dst string) error {
+// UploadFTP uploads srt file to ftp destination
+func UploadFTP(src, dst string) error {
 	config := goftp.Config{
-		User:               cfg.User,
-		Password:           cfg.Pass,
+		User:               cfg.FTP.User,
+		Password:           cfg.FTP.Pass,
 		ConnectionsPerHost: 10,
 		Timeout:            10 * time.Second,
 		TLSMode:            goftp.TLSImplicit,
@@ -23,7 +25,7 @@ func uploadFTP(cfg ConfigFTP, src, dst string) error {
 	}
 	defer f.Close()
 
-	client, err := goftp.DialConfig(config, cfg.Host)
+	client, err := goftp.DialConfig(config, cfg.FTP.Host)
 	if err != nil {
 		return err
 	}
