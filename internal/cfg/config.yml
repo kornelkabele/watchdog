@@ -30,4 +30,4 @@ settings:
   emailInterval: 300
   baseImageDir: "./images"
   logFile: "./watchdog.log"
-  ffmpegCmd: "ffmpeg \"-rtsp_transport\" tcp -i \"rtsp://{{.User}}:{{.Pass}}@{{.Host}}:{{.Port}}/stream1\" -frames:v 1 -nostdin {{.Image}} -y"
+  ffmpegCmd: "ffmpeg -rtsp_transport tcp -i \"rtsp://{{.User}}:{{.Pass}}@{{.Host}}:{{.Port}}/stream1\" -frames:v 1 -nostdin {{.Image}} -y"

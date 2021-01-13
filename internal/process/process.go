@@ -12,7 +12,7 @@ import (
 	"github.com/kornelkabele/watchdog/internal/file"
 	ftp "github.com/kornelkabele/watchdog/internal/ftp"
 	img "github.com/kornelkabele/watchdog/internal/image"
-	"github.com/kornelkabele/watchdog/internal/utils"
+	"github.com/kornelkabele/watchdog/internal/system"
 )
 
 var (
@@ -52,13 +52,17 @@ func Process() {
 		log.Printf("Failed to count number of files in directory: %s\n", err)
 	}
 	imageName := filepath.Join(imagePath, fmt.Sprintf("%s-%04d.jpg", weekdayHour, 1+numFiles))
-	captureCommand, err := utils.GetCaptureCommand(imageName)
+	captureCommand, err := system.GetCaptureCommand(imageName)
 	if err != nil {
 		log.Printf("Failed to create capture command: %s\n", err)
 	}
-	err = utils.Retry(5, 1*time.Second, func() error { return utils.ExecuteCommand(captureCommand) })
+	err = retry(5, 1*time.Second, func() error { return system.ExecuteCommand(captureCommand, 10*time.Second) })
 	if err != nil {
 		log.Printf("Failed to capture image: %s\n", err)
+		err = email.SendEmail("CAMERA CAPTURE FAILURE", fmt.Sprintf("Failed to capture camera: %s", err), nil)
+		if err != nil {
+			log.Printf("Failed to send email failure: %s\n", err)
+		}
 		return
 	}
 
@@ -90,6 +94,10 @@ func Process() {
 		err = ftp.UploadFTP(imageName, weekday)
 		if err != nil {
 			log.Printf("Failed to upload to FTP: %s\n", err)
+			err = email.SendEmail("CAMERA FTP FAILURE", fmt.Sprintf("Failed to upload to FTP: %s\n", err), nil)
+			if err != nil {
+				log.Printf("Failed to send FTP failure: %s\n", err)
+			}
 		}
 		lastImage = imageName
 	}

@@ -13,7 +13,7 @@ import (
 	"github.com/kornelkabele/watchdog/internal/file"
 	"github.com/kornelkabele/watchdog/internal/logger"
 	"github.com/kornelkabele/watchdog/internal/process"
-	"github.com/kornelkabele/watchdog/internal/utils"
+	"github.com/kornelkabele/watchdog/internal/system"
 )
 
 var (
@@ -47,7 +47,7 @@ func createBaseImageDir() {
 func main() {
 	var err error
 
-	dir := utils.GetExecDir()
+	dir := system.GetExecDir()
 	if err := os.Chdir(filepath.Dir(dir)); err != nil {
 		log.Fatal(err)
 	}
@@ -60,9 +60,9 @@ func main() {
 		log.Fatalf("Cannot set logger: %s\n", err)
 	}
 	defer logger.StopLogger(logFile)
-	utils.SigIntHook(func() { logger.StopLogger(logFile) })
+	system.SigIntHook(func() { logger.StopLogger(logFile) })
 
-	utils.WaitNetworkAvailable()
+	system.WaitNetworkAvailable()
 	createBaseImageDir()
 	email.SendEmail("CAM START", "Camera started", nil)
 
