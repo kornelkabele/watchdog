@@ -32,6 +32,7 @@ type ConfigSMTP struct {
 }
 
 type ConfigSettings struct {
+	Id              string  `yaml:"id"`
 	Sensitivity     float32 `yaml:"sensitivity"`
 	KeepThreshold   float32 `yaml:"keepThreshold"`
 	UploadThreshold float32 `yaml:"uploadThreshold"`
@@ -87,6 +88,9 @@ func LoadConfig(configFile string) {
 
 func loadEnvSecrets(cfg *Config) {
 	var err error
+	if os.Getenv("WATCHDOG_ID") != "" {
+		cfg.Settings.Id = os.Getenv("WATCHDOG_ID")
+	}
 	if os.Getenv("CAMERA_HOST") != "" {
 		cfg.Camera.Host = os.Getenv("CAMERA_HOST")
 	}

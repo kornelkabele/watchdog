@@ -10,6 +10,7 @@ Camera alert system which can run on Raspberry Pi, capture still images from RTS
 
 Create a .secrets file with credentials:
 ```sh
+WATCHDOG_ID=""
 CAMERA_HOST=""
 CAMERA_PORT=554
 CAMERA_USER=""

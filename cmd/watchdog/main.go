@@ -64,7 +64,9 @@ func main() {
 
 	system.WaitNetworkAvailable()
 	createBaseImageDir()
-	email.SendEmail("CAM START", "Camera started", nil)
+	email.SendEmail(fmt.Sprintf("CAMERA START: %s", cfg.Settings.Id),
+		fmt.Sprintf("%s Camera started", time.Now().Format(time.RFC3339)),
+		nil)
 
 	// main loop
 	for {

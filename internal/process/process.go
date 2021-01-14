@@ -59,7 +59,9 @@ func Process() {
 	err = retry(5, 1*time.Second, func() error { return system.ExecuteCommand(captureCommand, 10*time.Second) })
 	if err != nil {
 		log.Printf("Failed to capture image: %s\n", err)
-		err = email.SendEmail("CAMERA CAPTURE FAILURE", fmt.Sprintf("Failed to capture camera: %s", err), nil)
+		err = email.SendEmail(fmt.Sprintf("CAMERA CAPTURE FAILURE: %s", cfg.Settings.Id),
+			fmt.Sprintf("%s Failed to capture camera: %s", time.Now().Format(time.RFC3339), err),
+			nil)
 		if err != nil {
 			log.Printf("Failed to send email failure: %s\n", err)
 		}
@@ -94,7 +96,9 @@ func Process() {
 		err = ftp.UploadFTP(imageName, weekday)
 		if err != nil {
 			log.Printf("Failed to upload to FTP: %s\n", err)
-			err = email.SendEmail("CAMERA FTP FAILURE", fmt.Sprintf("Failed to upload to FTP: %s\n", err), nil)
+			err = email.SendEmail(fmt.Sprintf("CAMERA FTP FAILURE: %s", cfg.Settings.Id),
+				fmt.Sprintf("%s Failed to upload to FTP: %s", time.Now().Format(time.RFC3339), err),
+				nil)
 			if err != nil {
 				log.Printf("Failed to send FTP failure: %s\n", err)
 			}
@@ -104,7 +108,9 @@ func Process() {
 
 	// send email alert
 	if sidx > cfg.Settings.EmailThreshold && currentTime.Sub(lastAlert).Seconds() > float64(cfg.Settings.EmailInterval) {
-		err = email.SendEmail("CAMERA ALERT", "", []string{imageName})
+		err = email.SendEmail(fmt.Sprintf("CAMERA ALERT: %s", cfg.Settings.Id),
+			fmt.Sprintf("%s diff=%0.2f", time.Now().Format(time.RFC3339), sidx),
+			[]string{imageName})
 		if err != nil {
 			log.Printf("Failed to send email alert: %s\n", err)
 		}

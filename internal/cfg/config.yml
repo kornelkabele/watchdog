@@ -23,6 +23,7 @@ smtp:
 
 # Settings
 settings:
+  id: 
   sensitivity: 0.25
   keepThreshold: 0.10
   uploadThreshold: 0.12
