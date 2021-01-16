@@ -3,7 +3,7 @@ GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
-GOGET=$(GOCMD) get
+GOMOD=$(GOCMD) mod
 GOFLAGS=-ldflags="-s -w"
 MAIN=./cmd/watchdog/main.go
 CFG=./config.yml
@@ -36,6 +36,11 @@ run:
 		$(GOBUILD) $(GOFLAGS) -o $(BINARY_NAME) -v $(MAIN)
 		@cp $(CFG) $(BINPATH)
 		export $$(cat .secrets | tr -d '\r' | xargs) && $(BINARY_NAME)
+deps:
+		$(GOMOD) tidy
+vendor:
+		$(GOGET) mod vendor
+# Docker compilation
 docker-build:
 		docker build -t watchdog .
 		docker image prune --filter label=stage=builder -f
@@ -45,14 +50,6 @@ docker-stop:
 		docker stop --time=20 watchdog
 docker-killall:
 		docker kill $$(docker ps -a -q)
-deps:
-		$(GOGET) github.com/secsy/goftp@latest
-		$(GOGET) github.com/jordan-wright/email@latest
-		$(GOGET) github.com/disintegration/imaging@latest
-		$(GOGET) gopkg.in/yaml.v2
-vendor:
-		$(GOGET) mod vendor
-
 # Cross compilation
 pi-build:
 		CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 $(GOBUILD) $(GOFLAGS) -o $(BINARY_PI) -v $(MAIN)
