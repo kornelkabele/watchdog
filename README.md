@@ -52,6 +52,7 @@ make run
 
 ## Docker
 First edit Makefile, config.yml and .secrets to ensure you have proper settings for your environment.
+Also ensure that DOCKER_IMAGE_DIR and DOCKER_LOG_DIR point to existing absolute path.
 ```sh
 make docker-build
 make docker-run
