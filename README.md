@@ -5,6 +5,13 @@ Camera alert system which can run on Raspberry Pi, capture still images from RTS
 - Camera connectivity using ffmpeg and rtsp protocol capturing still images
 - Upload to FTP triggered by threshold
 - Email triggered by threshold
+- Rotating logs
+
+## Prerequisites
+- Camera supporting RTSP protocol
+- ffmpeg
+- ftp account
+- smtp email account
 
 ## Configuration
 Update config.yml, as a best practice do not put your secret credentials into this file.

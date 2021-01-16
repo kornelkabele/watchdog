@@ -38,7 +38,7 @@ type ConfigSettings struct {
 	UploadThreshold float32 `yaml:"uploadThreshold"`
 	EmailThreshold  float32 `yaml:"emailThreshold"`
 	EmailInterval   int     `yaml:"emailInterval"`
-	BaseImageDir    string  `yaml:"baseImageDir"`
+	ImageDir        string  `yaml:"imageDir"`
 	LogFile         string  `yaml:"logFile"`
 	FFmpegCmd       string  `yaml:"ffmpegCmd"`
 }
@@ -90,6 +90,12 @@ func loadEnvSecrets(cfg *Config) {
 	var err error
 	if os.Getenv("WATCHDOG_ID") != "" {
 		cfg.Settings.Id = os.Getenv("WATCHDOG_ID")
+	}
+	if os.Getenv("LOG_FILE") != "" {
+		cfg.Settings.Id = os.Getenv("LOG_FILE")
+	}
+	if os.Getenv("IMAGE_DIR") != "" {
+		cfg.Settings.Id = os.Getenv("IMAGE_DIR")
 	}
 	if os.Getenv("CAMERA_HOST") != "" {
 		cfg.Camera.Host = os.Getenv("CAMERA_HOST")
@@ -160,8 +166,8 @@ func validateConfig(cfg *Config) {
 	if cfg.Settings.EmailInterval < 0 || cfg.Settings.EmailInterval > 3600 {
 		log.Fatal("EmailInterval is out of range 0 - 3600 seconds\n")
 	}
-	if cfg.Settings.BaseImageDir == "" {
-		log.Fatal("BaseImageDir must be defined\n")
+	if cfg.Settings.ImageDir == "" {
+		log.Fatal("ImageDir must be defined\n")
 	}
 	if cfg.Settings.LogFile == "" {
 		log.Fatal("LogFile must be defined\n")

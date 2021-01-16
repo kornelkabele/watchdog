@@ -33,7 +33,7 @@ func Process() {
 	weekdayHour := fmt.Sprintf("%s%02d", weekday, currentTime.Hour())
 
 	// update directory
-	imagePath := filepath.Join(cfg.Settings.BaseImageDir, weekday)
+	imagePath := filepath.Join(cfg.Settings.ImageDir, weekday)
 	allImagesMask := filepath.Join(imagePath, weekdayHour+"-*.jpg")
 	err := file.CreateDir(imagePath)
 	if err != nil {
@@ -54,7 +54,7 @@ func Process() {
 	imageName := filepath.Join(imagePath, fmt.Sprintf("%s-%04d.jpg", weekdayHour, 1+numFiles))
 	captureCommand, err := system.GetCaptureCommand(imageName)
 	if err != nil {
-		log.Printf("Failed to create capture command: %s\n", err)
+		fmt.Printf("Failed to create capture command: %s\n", err)
 	}
 	err = retry(5, 1*time.Second, func() error { return system.ExecuteCommand(captureCommand, 10*time.Second) })
 	if err != nil {
@@ -81,7 +81,7 @@ func Process() {
 		return
 	}
 
-	fmt.Printf("Similarity index = %.2f (%s)\n", sidx, imageName)
+	log.Printf("Similarity index = %.2f (%s)\n", sidx, imageName)
 
 	// remove from local directory if too similar
 	if sidx < cfg.Settings.KeepThreshold {
@@ -89,7 +89,10 @@ func Process() {
 		if err != nil {
 			log.Println(err)
 		}
+		return
 	}
+
+	lastImage = imageName
 
 	// upload to FTP
 	if sidx > cfg.Settings.UploadThreshold {
@@ -103,7 +106,6 @@ func Process() {
 				log.Printf("Failed to send FTP failure: %s\n", err)
 			}
 		}
-		lastImage = imageName
 	}
 
 	// send email alert
@@ -114,7 +116,6 @@ func Process() {
 		if err != nil {
 			log.Printf("Failed to send email alert: %s\n", err)
 		}
-		lastImage = imageName
 		lastAlert = time.Now()
 	}
 }

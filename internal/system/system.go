@@ -86,10 +86,14 @@ func ExecuteCommand(command string, duration time.Duration) error {
 		cmd = exec.CommandContext(ctx, parts[0], parts[1:]...)
 	}
 
-	err := cmd.Run()
+	out, err := cmd.CombinedOutput()
+	if len(out) > 0 {
+		log.Println(string(out))
+	}
 	if err != nil {
 		log.Println(err)
 	}
+
 	return err
 }
 

@@ -57,6 +57,7 @@ func rgbaToInt(r uint32, g uint32, b uint32, a uint32) (int, int, int, int) {
 	return int(r / 257), int(g / 257), int(b / 257), int(a / 257)
 }
 
+// ImageSimilarityIndexFile produces a diff beteen two image files.
 func ImageSimilarityIndexFile(origin, reference string, sensitivity float32) (float32, error) {
 	img, err := imaging.Open(origin)
 	if err != nil {
@@ -71,7 +72,7 @@ func ImageSimilarityIndexFile(origin, reference string, sensitivity float32) (fl
 	return ImageSimilarityIndex(img, ref, sensitivity)
 }
 
-// Difference produces a diff beteen two images.
+// ImageSimilarityIndex produces a diff beteen two images.
 func ImageSimilarityIndex(img, ref image.Image, sensitivity float32) (float32, error) {
 	if img.Bounds() != ref.Bounds() {
 		return 0, fmt.Errorf("Images size do not match")
