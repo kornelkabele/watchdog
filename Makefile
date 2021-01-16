@@ -17,8 +17,8 @@ endif
 BINPATH=./bin
 BINARY_NAME=$(BINPATH)/watchdog$(EXT)
 BINARY_PI=$(BINPATH)/watchdog-pi
-IMAGE_DIR=c:/temp/watchdog/images
-LOG_DIR=c:/temp/watchdog/log
+DOCKER_IMAGE_DIR=c:/temp/watchdog/images
+DOCKER_LOG_DIR=c:/temp/watchdog/log
 
 all: test build
 build: 
@@ -40,7 +40,7 @@ docker-build:
 		docker build -t watchdog .
 		docker image prune --filter label=stage=builder -f
 docker-run:
-		docker run -it --name=watchdog --rm --env-file .secrets --mount type=bind,source=$(IMAGE_DIR),target=/images --mount type=bind,source=$(LOG_DIR),target=/log watchdog
+		docker run -it --name=watchdog --rm --env-file .secrets --mount type=bind,source=$(DOCKER_IMAGE_DIR),target=/images --mount type=bind,source=$(DOCKER_LOG_DIR),target=/log watchdog
 docker-stop:
 		docker stop --time=20 watchdog
 docker-killall:
