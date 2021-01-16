@@ -37,10 +37,10 @@ func parseFlags() {
 	}
 }
 
-func createBaseImageDir() {
-	err := file.CreateDir(cfg.Settings.BaseImageDir)
+func createImageDir() {
+	err := file.CreateDir(cfg.Settings.ImageDir)
 	if err != nil {
-		log.Fatalf("Cannot create base image directory: %s", err)
+		log.Fatalf("Cannot create image directory: %s", err)
 	}
 }
 
@@ -54,16 +54,23 @@ func main() {
 
 	parseFlags()
 	cfg.LoadConfig(ConfigFile)
+	fmt.Printf("Settings:\n")
+	fmt.Printf("Id: %s\n", cfg.Settings.Id)
+	fmt.Printf("Camera: %s:%d\n", cfg.Camera.Host, cfg.Camera.Port)
+	fmt.Printf("Email: %s:%d\n", cfg.SMTP.Host, cfg.SMTP.Port)
+	fmt.Printf("FTP: %s:%d\n", cfg.FTP.Host, cfg.FTP.Port)
+	fmt.Printf("Image dir: %s\n", cfg.Settings.ImageDir)
+	fmt.Printf("Log file: %s\n", cfg.Settings.LogFile)
 
-	logFile, err := logger.SetLogger(cfg.Settings.LogFile)
+	logger, err := logger.New(cfg.Settings.LogFile)
 	if err != nil {
 		log.Fatalf("Cannot set logger: %s\n", err)
 	}
-	defer logger.StopLogger(logFile)
-	system.SigIntHook(func() { logger.StopLogger(logFile) })
+	defer logger.Close()
+	system.SigIntHook(func() { logger.Close() })
 
 	system.WaitNetworkAvailable()
-	createBaseImageDir()
+	createImageDir()
 	email.SendEmail(fmt.Sprintf("CAMERA START: %s", cfg.Settings.Id),
 		fmt.Sprintf("%s Camera started", time.Now().Format(time.RFC3339)),
 		nil)

@@ -1,27 +1,46 @@
 package logger
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"time"
+
+	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 )
 
-// SetLogger sets logging
-func SetLogger(logFile string) (*os.File, error) {
-	file, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+// Logger object
+type Logger struct {
+	file *rotatelogs.RotateLogs
+}
+
+// New logger
+func New(logFile string) (*Logger, error) {
+	file, err := rotatelogs.New(
+		logFile+".%Y%m%d",
+		rotatelogs.WithMaxAge(30*24*time.Hour),
+		rotatelogs.WithRotationTime(24*time.Hour),
+	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create rotatelogs: %s", err)
 	}
+
+	logger := &Logger{file}
 
 	mw := io.MultiWriter(os.Stdout, file)
 	log.SetOutput(mw)
 	log.Println("Started")
+	log.Writer()
 
-	return file, nil
+	return logger, nil
 }
 
-// StopLogger closes logging
-func StopLogger(file *os.File) {
+// Close closes logging
+func (l *Logger) Close() error {
 	log.Println("Stopped")
-	file.Close()
+	if l.file != nil {
+		return l.file.Close()
+	}
+	return nil
 }
