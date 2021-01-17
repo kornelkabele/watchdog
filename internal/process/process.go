@@ -81,7 +81,7 @@ func Process() {
 		return
 	}
 
-	log.Printf("Similarity index = %.2f (%s)\n", sidx, imageName)
+	fmt.Printf("Similarity index = %.2f (%s)\n", sidx, imageName)
 
 	// remove from local directory if too similar
 	if sidx < cfg.Settings.KeepThreshold {
@@ -98,13 +98,15 @@ func Process() {
 	if sidx > cfg.Settings.UploadThreshold {
 		err = ftp.UploadFTP(imageName, weekday)
 		if err != nil {
-			log.Printf("Failed to upload to FTP: %s\n", err)
+			log.Printf("Failed to upload to FTP (%s, sim=%.2f): %s\n", imageName, sidx, err)
 			err = email.SendEmail(fmt.Sprintf("CAMERA FTP FAILURE: %s", cfg.Settings.Id),
 				fmt.Sprintf("%s Failed to upload to FTP: %s", time.Now().Format(time.RFC3339), err),
 				nil)
 			if err != nil {
 				log.Printf("Failed to send FTP failure: %s\n", err)
 			}
+		} else {
+			log.Printf("FTP upload success (%s, sim=%.2f)\n", imageName, sidx)
 		}
 	}
 
@@ -114,7 +116,9 @@ func Process() {
 			fmt.Sprintf("%s diff=%0.2f", time.Now().Format(time.RFC3339), sidx),
 			[]string{imageName})
 		if err != nil {
-			log.Printf("Failed to send email alert: %s\n", err)
+			log.Printf("Failed to send email alert (%s, sim=%.2f): %s\n", imageName, sidx, err)
+		} else {
+			log.Printf("Email alert success (%s, sim=%.2f)\n", imageName, sidx)
 		}
 		lastAlert = time.Now()
 	}
